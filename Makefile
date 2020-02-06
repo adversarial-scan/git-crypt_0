@@ -8,7 +8,9 @@ OBJFILES = \
     gpg.o \
     key.o \
     util.o \
-    parse_options.o
+    parse_options.o \
+    coprocess.o \
+    fhstream.o
 
 OBJFILES += crypto-openssl.o
 LDFLAGS += -lcrypto
