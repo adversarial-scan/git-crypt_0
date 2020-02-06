@@ -10,6 +10,10 @@
    * Linus G Thiel
    * Michael Schout
    * Simon Kotlinski
+   * Kevin Menard
+   * Wael M. Nasreddine
+   * Kevin Borgolte
+   * Adrian Cohea
 
  * And everyone who has tested git-crypt, provided feedback, reported
    bugs, and participated in discussions about new features.
