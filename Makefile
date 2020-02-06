@@ -1,7 +1,7 @@
 LDFLAGS := -lcrypto
 PREFIX := /usr/local
 
-OBJFILES = git-crypt.o commands.o crypto.o key.o util.o
+OBJFILES = git-crypt.o commands.o crypto.o gpg.o key.o util.o
 
 all: git-crypt
 
