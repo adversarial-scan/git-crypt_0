@@ -1,3 +1,8 @@
+  * Drop support for versions of Git older than 1.7.2.
+  * Minor improvements to some help/error messages.
+
+v0.4.1 (2015-01-08)
+  * Important usability fix to ensure that the .git-crypt directory
     can't be encrypted by accident (see RELEASE_NOTES-0.4.1.md for
     more information).
 
