@@ -26,34 +26,17 @@
  * as that of the covered work.
  */
 
-#ifndef _UTIL_H
-#define _UTIL_H
+#ifndef GIT_CRYPT_UTIL_HPP
+#define GIT_CRYPT_UTIL_HPP
 
 #include <string>
 #include <ios>
 #include <iosfwd>
-#include <stdint.h>
 
-struct System_error {
-	std::string	action;
-	std::string	target;
-	int		error;
-
-	System_error (const std::string& a, const std::string& t, int e) : action(a), target(t), error(e) { }
-};
-
-void		mkdir_parent (const std::string& path); // Create parent directories of path, __but not path itself__
-std::string	readlink (const char* pathname);
-std::string	our_exe_path ();
 int		exec_command (const char* command, std::ostream& output);
-int		exec_command_with_input (const char* command, const char* p, size_t len);
-bool		successful_exit (int status);
+std::string	resolve_path (const char* path);
 void		open_tempfile (std::fstream&, std::ios_base::openmode);
 std::string	escape_shell_arg (const std::string&);
-uint32_t	load_be32 (const unsigned char*);
-void		store_be32 (unsigned char*, uint32_t);
-bool		read_be32 (std::istream& in, uint32_t&);
-void		write_be32 (std::ostream& out, uint32_t);
 
 #endif
 

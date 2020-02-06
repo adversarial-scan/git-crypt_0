@@ -26,72 +26,56 @@
  * as that of the covered work.
  */
 
-#ifndef _CRYPTO_H
-#define _CRYPTO_H
+#ifndef GIT_CRYPT_CRYPTO_HPP
+#define GIT_CRYPT_CRYPTO_HPP
 
-#include "key.hpp"
 #include <openssl/aes.h>
 #include <openssl/hmac.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <iosfwd>
-#include <string>
 
-struct Crypto_error {
-	std::string	where;
-	std::string	message;
-
-	Crypto_error (const std::string& w, const std::string& m) : where(w), message(m) { }
+enum {
+	SHA1_LEN = 20,
+	NONCE_LEN = 12,
+	HMAC_KEY_LEN = 64,
+	AES_KEY_BITS = 256,
+	MAX_CRYPT_BYTES = (1ULL<<32)*16	// Don't encrypt more than this or the CTR value will repeat itself
 };
 
-class Aes_ctr_encryptor {
-public:
-	enum {
-		NONCE_LEN	= 12,
-		KEY_LEN		= AES_KEY_LEN,
-		BLOCK_LEN	= 16,
-		MAX_CRYPT_BYTES	= (1ULL<<32)*16 // Don't encrypt more than this or the CTR value will repeat itself
-	};
+struct keys_t {
+	AES_KEY		enc;
+	uint8_t		hmac[HMAC_KEY_LEN];
+};
+void load_keys (const char* filepath, keys_t* keys);
 
-private:
-	AES_KEY		key;
+class aes_ctr_state {
 	char		nonce[NONCE_LEN];// First 96 bits of counter
 	uint32_t	byte_counter;	// How many bytes processed so far?
-	unsigned char	otp[BLOCK_LEN];	// The current OTP that's in use
+	uint8_t		otp[16];	// The current OTP that's in use
 
 public:
-	Aes_ctr_encryptor (const unsigned char* key, const unsigned char* nonce);
+	aes_ctr_state (const uint8_t* arg_nonce, size_t arg_nonce_len);
 
-	void process (const unsigned char* in, unsigned char* out, size_t len);
-
-	// Encrypt/decrypt an entire input stream, writing to the given output stream
-	static void process_stream (std::istream& in, std::ostream& out, const unsigned char* key, const unsigned char* nonce);
+	void process (const AES_KEY* key, const uint8_t* in, uint8_t* out, size_t len);
 };
 
-typedef Aes_ctr_encryptor Aes_ctr_decryptor;
-
-class Hmac_sha1_state {
-public:
-	enum {
-		LEN	= 20,
-		KEY_LEN	= HMAC_KEY_LEN
-	};
-
-private:
+class hmac_sha1_state {
 	HMAC_CTX	ctx;
 
 	// disallow copy/assignment:
-	Hmac_sha1_state (const Hmac_sha1_state&) { }
-	Hmac_sha1_state& operator= (const Hmac_sha1_state&) { return *this; }
-
+	hmac_sha1_state (const hmac_sha1_state&) { }
+	hmac_sha1_state& operator= (const hmac_sha1_state&) { return *this; }
 public:
-	Hmac_sha1_state (const unsigned char* key, size_t key_len);
-	~Hmac_sha1_state ();
+	hmac_sha1_state (const uint8_t* key, size_t key_len);
+	~hmac_sha1_state ();
 
-	void add (const unsigned char* buffer, size_t buffer_len);
-	void get (unsigned char*);
+	void add (const uint8_t* buffer, size_t buffer_len);
+	void get (uint8_t*);
 };
 
-void random_bytes (unsigned char*, size_t);
+// Encrypt/decrypt an entire input stream, writing to the given output stream
+void process_stream (std::istream& in, std::ostream& out, const AES_KEY* enc_key, const uint8_t* nonce);
+
 
 #endif
