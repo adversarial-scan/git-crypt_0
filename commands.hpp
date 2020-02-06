@@ -51,6 +51,7 @@ int export_key (int argc, char** argv);
 int keygen (int argc, char** argv);
 int migrate_key (int argc, char** argv);
 int refresh (int argc, char** argv);
+int status (int argc, char** argv);
 
 #endif
 
