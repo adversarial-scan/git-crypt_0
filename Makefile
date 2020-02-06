@@ -1,3 +1,9 @@
+#
+# See COPYING file for license information.
+#
+
+CXXFLAGS ?= -Wall -pedantic -Wno-long-long -O2
+PREFIX ?= /usr/local
 BINDIR ?= $(PREFIX)/bin
 MANDIR ?= $(PREFIX)/share/man
 
